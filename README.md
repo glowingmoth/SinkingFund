@@ -7,11 +7,8 @@
 3. To have the foundations in place for working with web apps. 
 
 ## Features<br>
-- Create and Delete items
-- Each item will have a name, description, target, balance and percentage
-name 
-description
-target
-balance
-
-importance 1
+- Create and delete items
+- Each item will have a name, description, target, balance, percentage and importance
+- When an item reaches 100% of its target no more money should be allocated to it
+- User will be able to view all the items in the fund
+- When an item is deleted the funds will automatically be deducted from the sinking fund (like in the case of a target being reached and) in the other scenario if an item is removed but the money wasn't used the money will be redistrubted based on the items still left in the fund
