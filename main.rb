@@ -28,7 +28,7 @@ while true
         end
     elsif user_menu_choice == 3
         system("clear")
-        # View fund balance method
+            Edit.fund_balance(fund_balance)
     elsif user_menu_choice == 4
         system("clear")
         # Confirm exit method
