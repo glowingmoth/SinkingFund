@@ -49,7 +49,7 @@ module Edit
         item[:balance] = item_balance
 
         item_percentage = item_balance / (item_target / 100.0)
-        item[:percentage] = item_percentage.round(2)
+        item[:percentage] = item_percentage#.round(2)
 
         puts "Please enter item importance [1 = low] [10 = high]"
         item_importance = gets.chomp.to_i
@@ -99,17 +99,45 @@ module Edit
 
     def money_distribution(fund_hash)
         # This will distrubte the money to each item according to the item importance number
+
+        # total balance is fund_hash[:fund_balance]
+
+        total_balance = 0
+
         fund_hash[:list].each do |item|
-            item[:balance] = (fund_hash[:fund_balance] * item[:formula]).to_i
+
+            temp_balance = (fund_hash[:fund_balance] * item[:formula]).to_i
+            if temp_balance > item[:target]
+                item[:balance] = item[:target]
+            end
+
+            total_balance += item[:balance]
+
+            # item[:balance] = (fund_hash[:fund_balance] * item[:formula]).to_i
             item[:percentage] = (item[:balance] / (item[:target] / 100.0)).round(2)
-            # item[:balance] = 10 + 500 * 0.5;
-            #                = 10 + 250;
-            # item[:balance] = 10 + 500 * 0.5;
-            #                = 10 + 250;
+
         end
-        # money = 500
-        # item 1 {balance: 260}
-        # item 2 {balance: 260}
+
+
+        if total_balance < fund_hash[:fund_balance]
+            leftover_fund_balance = fund_hash[:fund_balance] - total_balance
+            sorted_items = fund_hash[:list].sort_by {|item| -item[:importance]}
+            # start here with iteration of sorted_items
+            sorted_items.map! do |item|
+                if item[:balance] == item[:target] 
+                    item
+                else # if item[:balance] < item[:target] 
+                    leftover_item_balance = item[:target] - item[:balance]
+                    if leftover_item_balance <= leftover_fund_balance
+                        item[:balance] = item[:target]
+                        leftover_fund_balance -= leftover_item_balance;
+                    else
+                        item[:balance] += leftover_fund_balance
+                        leftover_fund_balance = 0
+                    end
+                end
+            end
+        end
     end
 
     def fund_balance_menu(fund_hash)
@@ -140,7 +168,7 @@ module Edit
                 write_fund_hash(fund_hash)
                 system("clear")
             elsif user_balance_menu_choice == "q"
-                return fund_hash[:fund_balance]
+                return fund_hash
             else
                 system("clear")
                 puts "Invalid selection!"
