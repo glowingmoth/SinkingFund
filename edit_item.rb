@@ -1,6 +1,20 @@
-module Edit
+require "json"
 
-    def create_item(list)
+module Edit
+    def read_fund_hash
+        if (File.exist?("save.json"))
+            fund_hash = JSON.parse(File.read("save.json"), :symbolize_names => true)
+        else
+            fund_hash = {fund_balance: 0, list: []}
+        end
+        return fund_hash
+    end
+
+    def write_fund_hash(fund_hash)
+        File.write("save.json", JSON.generate(fund_hash))
+    end
+
+    def create_item(fund_hash)
         item = Hash.new
         puts "Please enter item [name]"
         item_name = gets.chomp
@@ -11,9 +25,21 @@ module Edit
         item_description = gets.chomp
         item[:description] = item_description
         system('cls')
-
-        puts "Please enter item [target]"
-        item_target = gets.chomp.to_i
+        ###########################
+        item_target = 0
+        loop do
+            puts "Please enter item [target]"
+            input_target = gets.chomp
+            if input_target.to_i.to_s != input_target
+                puts "Please input number only!"
+            else
+                item_target = input_target.to_i
+                break
+            end
+        end
+        # "100" -> 100 -> "100"
+        # "sidjfidsjfi" -> 0 -> "0"
+        #############################
         item[:target] = item_target
         system('cls')
         item_balance = 0
@@ -26,30 +52,64 @@ module Edit
         item_importance = gets.chomp.to_i
         item[:importance] = item_importance
 
-        list.push(item)
-        # write_json(list)
+        item[:balance] = 0;
+
+        fund_hash[:list].push(item)
+
+        # This is the formula to get the items individual balance
+        update_all_items_formula(fund_hash[:list])
+        write_fund_hash(fund_hash)
 
         system('cls')
-        return list
+        return fund_hash
     end
 
-    def print_list(list)
+    # This will return the value needed for "all_items_importance"
+    def update_all_items_formula(list)
+        all_items_importance = 0
         list.each do |item|
-            puts "name: #{item[:name]}"
-            puts "description: #{item[:description]}"
-            puts "target: $#{item[:target]}"
-            puts "balance: $#{item[:balance]}"
-            puts "percentage: #{item[:percentage]}%"
+            all_items_importance += item[:importance]
+        end
+
+        list.each do |item|
+            item[:formula] = item[:importance].to_f / all_items_importance
+        end
+
+        # item 1 {target: 1000 balance: 10, importance: 10, percentage: '1%', formula: 10/20 = 0.5}
+        # item 2 {target: 1000 balance: 10, importance: 10, percentage: '1%', formula: 10/20 = 0.5}
+        # all_items_importance = 20
+
+    end
+
+
+    def print_list(fund_hash)
+        fund_hash[:list].each do |item|
+            puts "Name: #{item[:name]}"
+            puts "Description: #{item[:description]}"
+            puts "Target: $#{item[:target]}"
+            puts "Balance: $#{item[:balance]}"
+            puts "Percentage: #{item[:percentage]}%"
+            puts "Importance: #{item[:importance]}"
             puts "-------------------------"
         end
     end
 
-    def money_distribution
+    def money_distribution(fund_hash)
         # This will distrubte the money to each item according to the item importance number
-        item_balance = item_importance / ()
+        fund_hash[:list].each do |item|
+            item[:balance] = (fund_hash[:fund_balance] * item[:formula]).to_i
+            item[:percentage] = (item[:balance] / (item[:target] / 100.0)).round(2)
+            # item[:balance] = 10 + 500 * 0.5;
+            #                = 10 + 250;
+            # item[:balance] = 10 + 500 * 0.5;
+            #                = 10 + 250;
+        end
+        # money = 500
+        # item 1 {balance: 260}
+        # item 2 {balance: 260}
     end
 
-    def fund_balance(fund_balance)
+    def fund_balance_menu(fund_hash)
         while true
             puts "What would you like to do?"
             puts "v = [view balance] [d = deposit] [w = withdraw] [q = main menu]"
@@ -57,29 +117,30 @@ module Edit
             if user_balance_menu_choice == "v"
                 system("clear")
                 puts "Total balance in the sinking fund"
-                puts "$#{fund_balance}"
+                puts "$#{fund_hash[:fund_balance]}"
                 sleep(3)
                 system("clear")
             elsif user_balance_menu_choice == "d"
                 system("clear")
                 puts "How much would you like to deposit?"
                 user_deposit = gets.chomp.to_i
-                fund_balance += user_deposit
+                fund_hash[:fund_balance] += user_deposit
+                money_distribution(fund_hash)
+                write_fund_hash(fund_hash)
                 system("clear")
             elsif user_balance_menu_choice == "w"
                 system("clear")
                 puts "How much would you like to withdraw?"
                 user_withdrawl = gets.chomp.to_i
-                fund_balance -= user_withdrawl
+                fund_hash[:fund_balance] -= user_withdrawl
+                money_distribution(fund_hash)
+                write_fund_hash(fund_hash)
                 system("clear")
             elsif user_balance_menu_choice == "q"
-                break
-            else
-                fund_balance
+                return fund_hash[:fund_balance]
             end
         end
     end
-
 
     # def write_json(list)
     #     JSON.open("save.json", "wb") do |json|
@@ -92,4 +153,16 @@ module Edit
     #     p list
     #     return list
     # end
+
+############################## Below this line are methods not directly related to editing items #####################
+    def exit_to_main_menu
+        puts ""
+        puts "[q = main menu]"
+        user_exit = gets.chomp
+        if user_exit == "q"
+            return true
+        else
+            return false
+        end
+    end
 end

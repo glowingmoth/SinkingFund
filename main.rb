@@ -1,8 +1,8 @@
 require_relative "edit_item.rb"
 include Edit
 
-fund_balance = 0
-list = []
+fund_hash = Edit.read_fund_hash
+Edit.money_distribution(fund_hash)
 
 while true
     system("clear")
@@ -17,18 +17,26 @@ while true
 
     if user_menu_choice == 1
         system("clear")
-        item = Edit.create_item(list)
+        fund_hash = Edit.create_item(fund_hash)
+        Edit.money_distribution(fund_hash)
         system("clear")
     elsif user_menu_choice == 2
-        system("clear")
-        if list.empty?
-            puts "There are currently no items in the Sinking Fund"
-        else
-            Edit.print_list(list)
+        while true
+            system("clear")
+            if fund_hash[:list].empty?
+                puts "There are currently no items in the Sinking Fund"
+                sleep(3)
+                break
+            else
+                Edit.print_list(fund_hash)
+                if Edit.exit_to_main_menu
+                    break
+                end
+            end
         end
     elsif user_menu_choice == 3
         system("clear")
-            Edit.fund_balance(fund_balance)
+        fund_hash = Edit.fund_balance_menu(fund_hash)
     elsif user_menu_choice == 4
         system("clear")
         # Confirm exit method
@@ -36,9 +44,9 @@ while true
         user_exit_choice = gets.chomp
 
         if user_exit_choice == "y"
-            # Exit program
+            exit
         else
-            # Stay in progam
+            # Stay in program
         end
 
     else
