@@ -17,3 +17,6 @@
 ## Help/Documentation
 
 ## Known issues
+This bug happens when trying to view the the items list immediatley after going into the fund balance menu
+'[]': no implicit conversion of Symbol into Integer (TyepError)
+

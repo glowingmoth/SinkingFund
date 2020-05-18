@@ -31,7 +31,10 @@ module Edit
             puts "Please enter item [target]"
             input_target = gets.chomp
             if input_target.to_i.to_s != input_target
-                puts "Please input number only!"
+                system("clear")
+                puts "Please input numbers only!"
+                sleep(2)
+                system("clear")
             else
                 item_target = input_target.to_i
                 break
@@ -138,6 +141,11 @@ module Edit
                 system("clear")
             elsif user_balance_menu_choice == "q"
                 return fund_hash[:fund_balance]
+            else
+                system("clear")
+                puts "Invalid selection!"
+                sleep(2)
+                system("clear")
             end
         end
     end

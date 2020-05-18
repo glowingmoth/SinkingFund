@@ -10,8 +10,10 @@ list = [
 ]
 
 # This will return the value needed for "all_items_importance" can be turned into a method
-list.each do |item|
-    all_items_importance += item[:importance]
+def find_all_items_importance
+    list.each do |item|
+        all_items_importance += item[:importance]
+    end
 end
 
 # This is the formula to get the items individual balance
