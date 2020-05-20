@@ -107,8 +107,11 @@ module Edit
         fund_hash[:list].each do |item|
 
             temp_balance = (fund_hash[:fund_balance] * item[:formula]).to_i
+
             if temp_balance > item[:target]
                 item[:balance] = item[:target]
+            else
+                item[:balance] = temp_balance
             end
 
             total_balance += item[:balance]
@@ -118,6 +121,7 @@ module Edit
 
         end
 
+        
 
         if total_balance < fund_hash[:fund_balance]
             leftover_fund_balance = fund_hash[:fund_balance] - total_balance
