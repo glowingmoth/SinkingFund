@@ -17,6 +17,5 @@
 ## Help/Documentation
 
 ## Known issues
-This bug happens when trying to view the the items list immediatley after going into the fund balance menu
-'[]': no implicit conversion of Symbol into Integer (TyepError)
+After withdrawing from the sinking fund items arent updated in the percentage. If items have previously reached 100% and you withdraw funds, even if the item is leass than the target it shows 100%.
 
