@@ -17,5 +17,5 @@
 ## Help/Documentation
 
 ## Known issues
-Still need to implement the removinf of items feature.
+Still need to implement the removing of items feature. For now the user can edit/remove through the json file :)
 
