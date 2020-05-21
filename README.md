@@ -17,5 +17,5 @@
 ## Help/Documentation
 
 ## Known issues
-After withdrawing from the sinking fund items arent updated in the percentage. If items have previously reached 100% and you withdraw funds, even if the item is leass than the target it shows 100%.
+Still need to implement the removinf of items feature.
 

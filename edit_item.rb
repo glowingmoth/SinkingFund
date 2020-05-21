@@ -1,6 +1,8 @@
 require "json"
 
 module Edit
+
+    # For reading the fund details from the json file
     def read_fund_hash
         if (File.exist?("save.json"))
             fund_hash = JSON.parse(File.read("save.json"), :symbolize_names => true)
@@ -10,10 +12,12 @@ module Edit
         return fund_hash
     end
 
+    # For writing to the json file
     def write_fund_hash(fund_hash)
         File.write("save.json", JSON.generate(fund_hash))
     end
 
+    # This will create the fund using an array of hashes and store it in a json file for reading an writing
     def create_item(fund_hash)
         item = Hash.new
         puts "Please enter item [name]"
@@ -25,7 +29,8 @@ module Edit
         item_description = gets.chomp
         item[:description] = item_description
         system('cls')
-        ###########################
+
+        # Here the block of code will insure the user enters numbers using techniques from regular expressions (regex)
         item_target = 0
         loop do
             puts "Please enter item [target]"
@@ -40,16 +45,14 @@ module Edit
                 break
             end
         end
-        # "100" -> 100 -> "100"
-        # "sidjfidsjfi" -> 0 -> "0"
-        #############################
+
         item[:target] = item_target
         system('cls')
         item_balance = 0
         item[:balance] = item_balance
 
         item_percentage = item_balance / (item_target / 100.0)
-        item[:percentage] = item_percentage#.round(2)
+        item[:percentage] = item_percentage
 
         puts "Please enter item importance [1 = low] [10 = high]"
         item_importance = gets.chomp.to_i
@@ -59,7 +62,7 @@ module Edit
 
         fund_hash[:list].push(item)
 
-        # This is the formula to get the items individual balance
+        # This is the method to get the items individual balance
         update_all_items_formula(fund_hash[:list])
         write_fund_hash(fund_hash)
 
@@ -84,7 +87,7 @@ module Edit
 
     end
 
-
+    # For viewing the list of items ion the fund
     def print_list(fund_hash)
         fund_hash[:list].each do |item|
             puts "Name: #{item[:name]}"
@@ -97,6 +100,7 @@ module Edit
         end
     end
 
+    # Distribute the money based on importance for each item
     def money_distribution(fund_hash)
         # This will distrubte the money to each item according to the item importance number
 
@@ -144,6 +148,7 @@ module Edit
         end
     end
 
+    # The menu where you can view deposit or withdraw money from the fund
     def fund_balance_menu(fund_hash)
         while true
             puts "What would you like to do?"
@@ -182,19 +187,15 @@ module Edit
         end
     end
 
-    # def write_json(list)
-    #     JSON.open("save.json", "wb") do |json|
-    #         json << list
-    #     end
-    # end
+    # This will remove an item from the sinking fund and either remove the money also or redistribute based on the reason for removing
+    def remove_item
 
-    # def read_json
-    #     list = JSON.parse("save.json")
-    #     p list
-    #     return list
-    # end
+    end
 
-############################## Below this line are methods not directly related to editing items #####################
+end
+
+module Other
+
     def exit_to_main_menu
         puts ""
         puts "[q = main menu]"
@@ -205,4 +206,5 @@ module Edit
             return false
         end
     end
+
 end

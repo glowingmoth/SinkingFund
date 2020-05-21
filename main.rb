@@ -1,9 +1,10 @@
 require_relative "edit_item.rb"
-include Edit
+include Edit, Other
 
 fund_hash = Edit.read_fund_hash
 Edit.money_distribution(fund_hash)
 
+# This is where the main menu loop begins
 while true
     system("clear")
     puts "Sinking Fund"
@@ -29,7 +30,7 @@ while true
                 break
             else
                 Edit.print_list(fund_hash)
-                if Edit.exit_to_main_menu
+                if Other.exit_to_main_menu
                     break
                 end
             end
